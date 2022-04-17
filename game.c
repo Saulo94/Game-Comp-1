@@ -9,7 +9,12 @@ char limpar[6];
 
 void jogar(int x, int y, int q_bomba);
 
-//FUNÇÃO QUE MODIFICA A VARIÁVEL 'LIMPAR' DE ACORDO COM O SO
+/*
+Como o comando de limpar a tela no terminal varia entre
+os sistemas operacionais Linux e Windows, a função qual
+o sistema operante e modifica a string de comando
+(char limpar[6]) de acordo.
+*/
 void inicio(){
 	//COMANDO LINUX, COMANDO WINDOWS
 	int y = system("clear"), x = system("cls");
@@ -31,7 +36,10 @@ void inicio(){
 	}
 }
 
-//ENSINA O USUÁRIO A JOGAR
+/*
+A função mostra ao usuário os comandos disponíveis para
+jogar e as regras a serem seguidas.
+*/
 void como_jogar(){
 	int i, j;
 	system(limpar);
@@ -59,7 +67,7 @@ void como_jogar(){
 		printf("\n");
 	}
 	printf("V\n");
-	//MAPA
+	//
 	printf("\n##REGRAS##\n\n");
 	printf("#Primeiro voce digita a inicial da acao em minuscula, depois a coordenada x da posicao\ndesejada e logo apos a coordenada y.\n");
 	printf("#Vale ressaltar que o eixo y cresce de cima para baixo como mostrado no esquema acima.\n");
@@ -70,7 +78,10 @@ void como_jogar(){
 	getchar();
 }
 
-//FUNÇÃO ONDE O USUÁRIO ESCOLHE A DIFICULDADE
+/*
+Expõe um Menu para o usuário para que ele possa escolher
+a dificuldades desejada.
+*/
 int dificuldade(){
 	int opcao, errado = 0, continuar = 1;
 
@@ -220,80 +231,79 @@ void preencher_campo(int** campo, int x, int y){
 	}
 }
 
-//FUNÇÃO QUE REVELA A POSIÇÃO ZERO
-void cavar_zero(int** campo, char** campo_real, int i, int j, int x, int y, int* cavados){
-	campo[i][j] = -2;
-	campo_real[i][j] = '0';
+/*
+Função recursiva que cava uma posição que possui 0 bombas
+adjacentes. Como o escavamento de zeros pelo campo se
+'propaga', essa função cava também todas as posições
+adjacentes até encontrar posições adjacentes a alguma bomba.
+
+entradas(campo_manipulacao, campo_interface, co_y, co_x, lar, alt, qt_casas_seguras_cavadas)
+*/
+void cavar_zero(int** campo_man, char** campo_int, int co_y, int co_x, int lar, int alt, int* cavados){
+	campo_man[co_y][co_x] = -2;
+	campo_int[co_y][co_x] = '0';
 	*(cavados) -= 1;
-	if(i > 0){
-		if(campo[i - 1][j] == 0){
-			cavar_zero(campo, campo_real, i - 1, j, x, y, cavados);
-		}
-		else if((campo[i - 1][j] != -2) && (campo_real[i - 1][j] == 'X')){
-			campo_real[i - 1][j] = campo[i - 1][j] + '0';
+	if(co_y > 0){
+		if(campo_man[co_y - 1][co_x] == 0)
+			cavar_zero(campo_man, campo_int, co_y - 1, co_x, lar, alt, cavados);
+		else if((campo_man[co_y - 1][co_x] > 0) && (campo_int[co_y - 1][co_x] == 'X')){
+			campo_int[co_y - 1][co_x] = campo_man[co_y - 1][co_x] + '0';
 			*cavados -= 1;
 		}
 	}
-	if(i < y - 1){
-		if(campo[i + 1][j] == 0){
-			cavar_zero(campo, campo_real, i + 1, j, x, y, cavados);
-		}
-		else if((campo[i + 1][j] != -2) && (campo_real[i + 1][j] == 'X')){
-			campo_real[i + 1][j] = campo[i + 1][j] + '0';
+	if(co_y < alt - 1){
+		if(campo_man[co_y + 1][co_x] == 0)
+			cavar_zero(campo_man, campo_int, co_y + 1, co_x, lar, alt, cavados);
+		else if((campo_man[co_y + 1][co_x] > 0) && (campo_int[co_y + 1][co_x] == 'X')){
+			campo_int[co_y + 1][co_x] = campo_man[co_y + 1][co_x] + '0';
 			*cavados -= 1;
 		}
 	}
-	if(j > 0){
-		if(campo[i][j - 1] == 0){
-			cavar_zero(campo, campo_real, i, j - 1, x, y, cavados);
-		}
-		else if((campo[i][j - 1] != -2) && (campo_real[i][j - 1] == 'X')){
-			campo_real[i][j - 1] = campo[i][j - 1] + '0';
+	if(co_x > 0){
+		if(campo_man[co_y][co_x - 1] == 0)
+			cavar_zero(campo_man, campo_int, co_y, co_x - 1, lar, alt, cavados);
+		else if((campo_man[co_y][co_x - 1] > 0) && (campo_int[co_y][co_x - 1] == 'X')){
+			campo_int[co_y][co_x - 1] = campo_man[co_y][co_x - 1] + '0';
 			*cavados -= 1;
 		}
 	}
-	if(j < x - 1){
-		if(campo[i][j + 1] == 0){
-			cavar_zero(campo, campo_real, i, j + 1, x, y, cavados);
-		}
-		else if((campo[i][j + 1] != -2) && (campo_real[i][j + 1] == 'X')){
-			campo_real[i][j + 1] = campo[i][j + 1] + '0';
+	if(co_x < lar - 1){
+		if(campo_man[co_y][co_x + 1] == 0)
+			cavar_zero(campo_man, campo_int, co_y, co_x + 1, lar, alt, cavados);
+		else if((campo_man[co_y][co_x + 1] > 0) && (campo_int[co_y][co_x + 1] == 'X')){
+			campo_int[co_y][co_x + 1] = campo_man[co_y][co_x + 1] + '0';
 			*cavados -= 1;
 		}
 	}
-	if((i > 0) && (j > 0)){
-		if(campo[i - 1][j - 1] == 0){
-			cavar_zero(campo, campo_real, i - 1, j - 1, x, y, cavados);
-		}
-		else if((campo[i - 1][j - 1] != -2) && (campo_real[i - 1][j - 1] == 'X')){
-			campo_real[i - 1][j - 1] = campo[i - 1][j - 1] + '0';
+	if((co_y > 0) && (co_x > 0)){
+		if(campo_man[co_y - 1][co_x - 1] == 0)
+			cavar_zero(campo_man, campo_int, co_y - 1, co_x - 1, lar, alt, cavados);
+		else if((campo_man[co_y - 1][co_x - 1] > 0) && (campo_int[co_y - 1][co_x - 1] == 'X')){
+			campo_int[co_y - 1][co_x - 1] = campo_man[co_y - 1][co_x - 1] + '0';
 			*cavados -= 1;
 		}
 	}
-	if((i > 0) && (j < x - 1)){
-		if(campo[i - 1][j + 1] == 0){
-			cavar_zero(campo, campo_real, i - 1, j + 1, x, y, cavados);
-		}
-		else if((campo[i - 1][j + 1] != -2) && (campo_real[i - 1][j + 1] == 'X')){
-			campo_real[i - 1][j + 1] = campo[i - 1][j + 1] + '0';
+	if((co_y > 0) && (co_x < lar - 1)){
+		if(campo_man[co_y - 1][co_x + 1] == 0)
+			cavar_zero(campo_man, campo_int, co_y - 1, co_x + 1, lar, alt, cavados);
+		else if((campo_man[co_y - 1][co_x + 1] > 0) && (campo_int[co_y - 1][co_x + 1] == 'X')){
+			campo_int[co_y - 1][co_x + 1] = campo_man[co_y - 1][co_x + 1] + '0';
 			*cavados -= 1;
 		}
 	}
-	if((i < y - 1) && (j > 0)){
-		if(campo[i + 1][j - 1] == 0){
-			cavar_zero(campo, campo_real, i + 1, j - 1, x, y, cavados);
-		}
-		else if((campo[i + 1][j - 1] != -2) && (campo_real[i + 1][j - 1] == 'X')){
-			campo_real[i + 1][j - 1] = campo[i + 1][j - 1] + '0';
+	if((co_y < alt - 1) && (co_x > 0)){
+		if(campo_man[co_y + 1][co_x - 1] == 0)
+			cavar_zero(campo_man, campo_int, co_y + 1, co_x - 1, lar, alt, cavados);
+		else if((campo_man[co_y + 1][co_x - 1] > 0) && (campo_int[co_y + 1][co_x - 1] == 'X')){
+			campo_int[co_y + 1][co_x - 1] = campo_man[co_y + 1][co_x - 1] + '0';
 			*cavados -= 1;
 		}
 	}
-	if((i < y - 1) && (j < x - 1)){
-		if(campo[i + 1][j + 1] == 0){
-			cavar_zero(campo, campo_real, i + 1, j + 1, x, y, cavados);
-		}
-		else if((campo[i + 1][j + 1] != -2) && (campo_real[i + 1][j + 1] == 'X')){
-			campo_real[i + 1][j + 1] = campo[i + 1][j + 1] + '0';
+	if((co_y < alt - 1) && (co_x < lar - 1)){
+		if(campo_man[co_y + 1][co_x + 1] == 0)
+			cavar_zero(campo_man, campo_int, co_y + 1, co_x + 1, lar, alt, cavados);
+		else if((campo_man[co_y + 1][co_x + 1] > 0) && (campo_int[co_y + 1][co_x + 1] == 'X')){
+			campo_int[co_y + 1][co_x + 1] = campo_man[co_y + 1][co_x + 1] + '0';
 			*cavados -= 1;
 		}
 	}
