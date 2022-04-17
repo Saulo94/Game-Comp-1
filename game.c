@@ -180,42 +180,25 @@ void preencher_campo(int** campo, int x, int y){
 	int i, j, q_bomba_lado;
 	for(i = 0; i < y; i++){
 		for(j = 0; j < x; j++){
-			if(campo[i][j] == -1){
+			if(campo[i][j] == -1)
 				continue;
-			}
 			q_bomba_lado = 0;
-			if(i > 0){
-				if(campo[i - 1][j] == -1)
-					q_bomba_lado++;
-			}
-			if(i < y - 1){
-				if(campo[i + 1][j] == -1)
-					q_bomba_lado++;
-			}
-			if(j > 0){
-				if(campo[i][j - 1] == -1)
-					q_bomba_lado++;
-			}
-			if(j < x - 1){
-				if(campo[i][j + 1] == -1)
-					q_bomba_lado++;
-			}
-			if((i > 0) && (j > 0)){
-				if(campo[i - 1][j - 1] == -1)
-					q_bomba_lado++;
-			}
-			if((i > 0) && (j < x - 1)){
-				if(campo[i - 1][j + 1] == -1)
-					q_bomba_lado++;
-			}
-			if((i < y - 1) && (j > 0)){
-				if(campo[i + 1][j - 1] == -1)
-					q_bomba_lado++;
-			}
-			if((i < y - 1) && (j < x - 1)){
-				if(campo[i + 1][j + 1] == -1)
-					q_bomba_lado++;
-			}
+			if((i > 0) && (campo[i - 1][j] == -1))
+				q_bomba_lado++;
+			if((i < y - 1) && (campo[i + 1][j] == -1))
+				q_bomba_lado++;
+			if((j > 0) && (campo[i][j - 1] == -1))
+				q_bomba_lado++;
+			if((j < x - 1) && (campo[i][j + 1] == -1))
+				q_bomba_lado++;
+			if(((i > 0) && (j > 0)) && (campo[i - 1][j - 1] == -1))
+				q_bomba_lado++;
+			if(((i > 0) && (j < x - 1)) && (campo[i - 1][j + 1] == -1))
+				q_bomba_lado++;
+			if(((i < y - 1) && (j > 0)) && (campo[i + 1][j - 1] == -1))
+				q_bomba_lado++;
+			if(((i < y - 1) && (j < x - 1)) && (campo[i + 1][j + 1] == -1))
+				q_bomba_lado++;
 			campo[i][j] = q_bomba_lado;
 		}
 	}
