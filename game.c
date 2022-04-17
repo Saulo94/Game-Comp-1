@@ -310,106 +310,116 @@ void cavar_zero(int** campo_man, char** campo_int, int co_y, int co_x, int lar, 
 }
 
 //CAVA AS CASAS ADJACENTES DE ACORDO COM AS BOMBAS MARCADAS
-int cavar_especial(int** campo, char** campo_real, int i, int j, int x, int y, int* cavados){
+int cavar_especial(int** campo_man, char** campo_int, int co_y, int co_x, int lar, int alt, int* cavados){
 	int k;
-	int n_x[8], n_y[8], l = 0;//COORDENADAS PARA LUGARE SEM BOMBA E MARCAÇÃO
+	int n_x[8], n_y[8], l = 0;//COORDENADAS PARA LUGARES SEM BOMBA NEM MARCAÇÃO
 	int b_x[8], b_y[8], b = 0;//COORDENADAS PARA LUGARES COM BOMBA OU MARCAÇÃO
 	int q_certa = 0;		  //QUANTIDADE DE BOMBAS MARCADAS
-	int q_marca = 0;		  //QUANTIDADE DE MARCAÇÕES EM NÃO BOMBAS
+	int q_errada = 0;		  //QUANTIDADE DE MARCAÇÕES EM NÃO BOMBAS
 	int q_bomba = 0;		  //QUANTIDADE DE BOMBAS SEM MARCAÇÃO
-	if(i < y - 1){
-		if((campo[i + 1][j] == -1) || (campo_real[i + 1][j] == 'M')){
-			b_x[b] = j; b_y[b] = i + 1; b++;
+	if(co_y < alt - 1){
+		if((campo_man[co_y + 1][co_x] == -1) || (campo_int[co_y + 1][co_x] == 'M')){
+			b_x[b] = co_x; b_y[b] = co_y + 1;
+			b++;
 		}
-		else if((campo[i + 1][j] >= 0) && (campo_real[i + 1][j] == 'X')){
-			n_x[l] = j; n_y[l] = i + 1; l++;
-		}
-	}
-	if(i > 0){
-		if((campo[i - 1][j] == -1) || (campo_real[i - 1][j] == 'M')){
-			b_x[b] = j; b_y[b] = i - 1; b++;
-		}
-		else if((campo[i - 1][j] >= 0) && (campo_real[i - 1][j] == 'X')){
-			n_x[l] = j; n_y[l] = i - 1; l++;
+		else if((campo_man[co_y + 1][co_x] >= 0) && (campo_int[co_y + 1][co_x] == 'X')){
+			n_x[l] = co_x; n_y[l] = co_y + 1;
+			l++;
 		}
 	}
-	if(j < x - 1){
-		if((campo[i][j + 1] == -1) || (campo_real[i][j + 1] == 'M')){
-			b_x[b] = j + 1; b_y[b] = i; b++;
+	if(co_y > 0){
+		if((campo_man[co_y - 1][co_x] == -1) || (campo_int[co_y - 1][co_x] == 'M')){
+			b_x[b] = co_x; b_y[b] = co_y - 1;
+			b++;
 		}
-		else if((campo[i][j + 1] >= 0) && (campo_real[i][j + 1] == 'X')){
-			n_x[l] = j + 1; n_y[l] = i; l++;
+		else if((campo_man[co_y - 1][co_x] >= 0) && (campo_int[co_y - 1][co_x] == 'X')){
+			n_x[l] = co_x; n_y[l] = co_y - 1;
+			l++;
+		}
+	}
+	if(co_x < lar - 1){
+		if((campo_man[co_y][co_x + 1] == -1) || (campo_int[co_y][co_x + 1] == 'M')){
+			b_x[b] = co_x + 1; b_y[b] = co_y;
+			b++;
+		}
+		else if((campo_man[co_y][co_x + 1] >= 0) && (campo_int[co_y][co_x + 1] == 'X')){
+			n_x[l] = co_x + 1; n_y[l] = co_y;
+			l++;
 		}	
 	}
-	if(j > 0){
-		if((campo[i][j - 1] == -1) || (campo_real[i][j - 1] == 'M')){
-			b_x[b] = j - 1; b_y[b] = i; b++;
+	if(co_x > 0){
+		if((campo_man[co_y][co_x - 1] == -1) || (campo_int[co_y][co_x - 1] == 'M')){
+			b_x[b] = co_x - 1; b_y[b] = co_y;
+			b++;
 		}
-		else if((campo[i][j - 1] >= 0) && (campo_real[i][j - 1] == 'X')){
-			n_x[l] = j - 1; n_y[l] = i; l++;
+		else if((campo_man[co_y][co_x - 1] >= 0) && (campo_int[co_y][co_x - 1] == 'X')){
+			n_x[l] = co_x - 1; n_y[l] = co_y;
+			l++;
 		}	
 	}
-	if((j > 0) && (i > 0)){
-		if((campo[i - 1][j - 1] == -1) || (campo_real[i - 1][j - 1] == 'M')){
-			b_x[b] = j - 1; b_y[b] = i - 1; b++;
+	if((co_x > 0) && (co_y > 0)){
+		if((campo_man[co_y - 1][co_x - 1] == -1) || (campo_int[co_y - 1][co_x - 1] == 'M')){
+			b_x[b] = co_x - 1; b_y[b] = co_y - 1;
+			b++;
 		}
-		else if((campo[i - 1][j - 1] >= 0) && (campo_real[i - 1][j - 1] == 'X')){
-			n_x[l] = j - 1; n_y[l] = i - 1; l++;
+		else if((campo_man[co_y - 1][co_x - 1] >= 0) && (campo_int[co_y - 1][co_x - 1] == 'X')){
+			n_x[l] = co_x - 1; n_y[l] = co_y - 1;
+			l++;
 		}	
 	}
-	if((j < x - 1) && (i > 0)){
-		if((campo[i - 1][j + 1] == -1) || (campo_real[i - 1][j + 1] == 'M')){
-			b_x[b] = j + 1; b_y[b] = i - 1; b++;
+	if((co_x < lar - 1) && (co_y > 0)){
+		if((campo_man[co_y - 1][co_x + 1] == -1) || (campo_int[co_y - 1][co_x + 1] == 'M')){
+			b_x[b] = co_x + 1; b_y[b] = co_y - 1;
+			b++;
 		}
-		else if((campo[i - 1][j + 1] >= 0) && (campo_real[i - 1][j + 1] == 'X')){
-			n_x[l] = j + 1; n_y[l] = i - 1; l++;
+		else if((campo_man[co_y - 1][co_x + 1] >= 0) && (campo_int[co_y - 1][co_x + 1] == 'X')){
+			n_x[l] = co_x + 1; n_y[l] = co_y - 1;
+			l++;
 		}	
 	}
-	if((j < x - 1) && (i < y - 1)){
-		if((campo[i + 1][j + 1] == -1) || (campo_real[i + 1][j + 1] == 'M')){
-			b_x[b] = j + 1; b_y[b] = i + 1; b++;
+	if((co_x < lar - 1) && (co_y < alt - 1)){
+		if((campo_man[co_y + 1][co_x + 1] == -1) || (campo_int[co_y + 1][co_x + 1] == 'M')){
+			b_x[b] = co_x + 1; b_y[b] = co_y + 1;
+			b++;
 		}
-		else if((campo[i + 1][j + 1] >= 0) && (campo_real[i + 1][j + 1] == 'X')){
-			n_x[l] = j + 1; n_y[l] = i + 1; l++;
-		}	
+		else if((campo_man[co_y + 1][co_x + 1] >= 0) && (campo_int[co_y + 1][co_x + 1] == 'X')){
+			n_x[l] = co_x + 1; n_y[l] = co_y + 1;
+			l++;
+		}
 	}
-	if((j > 0) && (i < y - 1)){
-		if((campo[i + 1][j - 1] == -1) || (campo_real[i + 1][j - 1] == 'M')){
-			b_x[b] = j - 1; b_y[b] = i + 1; b++;
+	if((co_x > 0) && (co_y < alt - 1)){
+		if((campo_man[co_y + 1][co_x - 1] == -1) || (campo_int[co_y + 1][co_x - 1] == 'M')){
+			b_x[b] = co_x - 1; b_y[b] = co_y + 1;
+			b++;
 		}
-		else if((campo[i + 1][j - 1] >= 0) && (campo_real[i + 1][j - 1] == 'X')){
-			n_x[l] = j - 1; n_y[l] = i + 1; l++;
-		}	
+		else if((campo_man[co_y + 1][co_x - 1] >= 0) && (campo_int[co_y + 1][co_x - 1] == 'X')){
+			n_x[l] = co_x - 1; n_y[l] = co_y + 1;
+			l++;
+		}
 	}
 	for(k = 0; k < b; k++){
-		if((campo[b_y[k]][b_x[k]] == -1) && (campo_real[b_y[k]][b_x[k]] == 'M')){
+		if((campo_man[b_y[k]][b_x[k]] == -1) && (campo_int[b_y[k]][b_x[k]] == 'M'))
 			q_certa++;
-		}
-		else if((campo[b_y[k]][b_x[k]] == -1) && (campo_real[b_y[k]][b_x[k]] != 'M')){
+		else if((campo_man[b_y[k]][b_x[k]] == -1) && (campo_int[b_y[k]][b_x[k]] != 'M'))
 			q_bomba++;
-		}
-		else if((campo[b_y[k]][b_x[k]] != -1) && (campo_real[b_y[k]][b_x[k]] == 'M')){
-			q_marca++;
-		}
+		else if((campo_man[b_y[k]][b_x[k]] != -1) && (campo_int[b_y[k]][b_x[k]] == 'M'))
+			q_errada++;
 	}
-	if(q_certa == campo[i][j]){
+	if(q_certa == campo_man[co_y][co_x]){
 		for(k = 0; k < l; k++){
-			if(campo[n_y[k]][n_x[k]] == 0){
-				cavar_zero(campo, campo_real, n_y[k], n_x[k], x, y, cavados);
-			}
-			else if(campo[n_y[k]][n_x[k]] > 0){
-				campo_real[n_y[k]][n_x[k]] = campo[n_y[k]][n_x[k]] + '0';
+			if(campo_man[n_y[k]][n_x[k]] == 0)
+				cavar_zero(campo_man, campo_int, n_y[k], n_x[k], lar, alt, cavados);
+			else if(campo_man[n_y[k]][n_x[k]] > 0){
+				campo_int[n_y[k]][n_x[k]] = campo_man[n_y[k]][n_x[k]] + '0';
 				*cavados -= 1;
 			}
 		}
 		return 1;//AÇÃO VÁLIDA
 	}
-	else if((q_certa != campo[i][j]) && (q_marca == q_bomba) && (q_bomba + q_certa == campo[i][j])){
+	else if (q_errada + q_certa == campo_man[co_y][co_x])
 		return -1;//AÇÃO VÁLIDA, PORÉM ERRADA, PERDEU O JOGO
-	}
-	else{
+	else
 		return 0;//AÇÃO INVÁLIDA
-	}
 }
 
 //FUNÇÃO ONDE A PARTIDA OCORRERÁ
