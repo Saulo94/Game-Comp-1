@@ -157,13 +157,13 @@ int main(){
 void gerar_bombas(int* bombas, int tam, int maximo){
 	int i, j, numero, achou;
 
-	srand(time(NULL)); //INICIALIZA VALOR MÁXIMO PARA SRAND
+	srand(time(NULL));
 
 	for(i = 0; i < tam; i++){
 		do{
 			achou = 0;
-			numero = rand() % maximo; //GERA NÚMERO ALEATÓRIO
-			for(j = 0; j < tam; j++){
+			numero = rand() % maximo;
+			for(j = 0; j <= i; j++){
 				if(numero == *(bombas + j)){
 					achou = 1; //NÚMERO ALEATÓRIO JÁ EXISTE
 					break;
@@ -172,7 +172,6 @@ void gerar_bombas(int* bombas, int tam, int maximo){
 		}while(achou);
 		*(bombas + i) = numero;
 	}
-
 	return;
 }
 
@@ -406,7 +405,7 @@ int cavar_especial(int** campo, char** campo_real, int i, int j, int x, int y, i
 
 //FUNÇÃO ONDE A PARTIDA OCORRERÁ
 void jogar(int alt, int lar, int q_bomba){
-	int i, j, continuar = 1;
+	int i, j, k, continuar = 1;
 	int certo_marcado = 0; 				//BOMBAS MARCADAS CORRETAMENTE
 	int errado_marcado = 0;				//MARCAÇÕES ERRADAS
 	int errado = 0;						//VARIÁVEL QUE GUARDA 1 QUANDO OCORRE UM ERRO
@@ -436,7 +435,8 @@ void jogar(int alt, int lar, int q_bomba){
 	//PREENCHE A MATRIZ COM AS COORDENADAS DAS BOMBAS GERADAS ANTERIORMENTE
 	for(i = 0; i < q_bomba; i++){
 		j = *(coordenadas + i) % lar;
-		campo[(*(coordenadas + i) - j) / lar][j] = -1;
+		k = (*(coordenadas + i) - j) / lar;
+		campo[k][j] = -1;
 	}
 	free(coordenadas);
 
@@ -591,4 +591,5 @@ void jogar(int alt, int lar, int q_bomba){
 	getchar();
 	free(campo);
 	free(campo_real);
+	return;
 }
