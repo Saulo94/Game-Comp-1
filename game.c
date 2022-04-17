@@ -7,7 +7,7 @@
 //VARIÁVEL DISPONÍVEL PARA LIMPAR A TELA
 char limpar[6];
 
-int jogar(int x, int y, int q_bomba);
+void jogar(int x, int y, int q_bomba);
 
 //FUNÇÃO QUE MODIFICA A VARIÁVEL 'LIMPAR' DE ACORDO COM O SO
 void inicio(){
@@ -31,20 +31,22 @@ void inicio(){
 	}
 }
 
-//ENSINA O USUÁRIO COMO JOGAR
+//ENSINA O USUÁRIO A JOGAR
 void como_jogar(){
 	int i, j;
 	system(limpar);
-	printf("##COMO JOGAR##\n\n");
+	printf("##INTRODUCAO##\n\n");
 	printf("#No jogo existem 3 dificuldades, quanto maior a dificuldade, maior o tamanho\ndo campo e número de bombas.\n");
-	printf("#Para vencer o jogo voce precisa cavar todas as posicoes que nao sejam bombas.\n");
+	printf("#Para vencer o jogo, voce precisa cavar todas as posicoes que nao sejam bombas.\n");
 	printf("#As coordenadas desconhecidas sao representadas por 'X', as conhecidas sao\nrepresentadas pelo numero de bombas adjacentes a ela e as marcadas sao representadas com 'M'.\n");
 	printf("#Dentro da partida, voce pode realizar 4 comandos: Cavar, Marcar, Desmarcar e Especial.\n");
-	printf("#Cavar - Esse comando cava o lugar desejado e, se houver bomba, voce perde.\n");
-	printf("#Marcar - Esse comando marca a posicao desejada, permitindo-lhe marcar possiveis bombas.\n");
-	printf("#Desmarcar - Esse comando desmarca uma posicao ja marcada.\n");
-	printf("#Especial - Esse comando permite que voce cave todas as posicoes adjacentes a uma posicao\nja cavada caso haja uma quantidade de marcacoes adjacentes a ele iguais ao numero de bombas\nadjacentes.\n");
+	printf("\n##COMANDOS##\n\n");
+	printf("#Cavar     -> cava o lugar desejado e, se houver bomba, voce perde.\n");
+	printf("#Marcar    -> marca a posicao desejada, permitindo-lhe marcar possiveis bombas.\n");
+	printf("#Desmarcar -> desmarca uma posicao ja marcada.\n");
+	printf("#Especial  -> permite que voce cave todas as posicoes adjacentes a uma posicao\nja cavada caso haja uma quantidade de marcacoes adjacentes a ele iguais ao numero de bombas\nadjacentes.\n");
 	printf("\n");
+	//MAPA
 	printf("-------------------->\n");
 	printf("|  ");
 	for(i = 0; i < 9; i++)
@@ -57,9 +59,9 @@ void como_jogar(){
 		printf("\n");
 	}
 	printf("V\n");
-	printf("\n");
-	printf("#Para voce utlizar os comandos ja citados na posicao desejada voce precisa seguir regras.\n");
-	printf("#Primeiro voce digita a inicial da acao em minuscula, depois a coordenada x da posicao\ndesejada e depois a coordenada y.\n");
+	//MAPA
+	printf("\n##REGRAS##\n\n");
+	printf("#Primeiro voce digita a inicial da acao em minuscula, depois a coordenada x da posicao\ndesejada e logo apos a coordenada y.\n");
 	printf("#Vale ressaltar que o eixo y cresce de cima para baixo como mostrado no esquema acima.\n");
 	printf("#Exemplo de comando que cava a posicao x = 2, y = 4: c 2 4\n");
 	printf("#Durante a partida, será mostrado o número de posições marcadas como 'bombas', caso voce\nmarque um numero de posicoes maior que a quantidade de bombas, este passará a ser negativo.\n");
@@ -76,11 +78,11 @@ int dificuldade(){
 
 		system(limpar);
 
-		if(errado){
+		if(errado)
 			printf("Por favor, digite uma opcao valida!\n");
-		} errado = 0;
+		errado = 0;
 
-		printf("####DIFICULDADE####\n");
+		printf("###DIFICULDADE###\n");
 		printf("1.Facil:   (09 x 09)\n");
 		printf("2.Medio:   (16 x 16)\n");
 		printf("3.Dificil: (30 x 16)\n");
@@ -92,13 +94,13 @@ int dificuldade(){
 
 		switch(opcao){
 			case 1:
-				continuar = jogar( 9,  9, 10);
+				jogar( 9,  9, 10);
 				break;
 			case 2:
-				continuar = jogar(16, 16, 40);
+				jogar(16, 16, 40);
 				break;
 			case 3:
-				continuar = jogar(16, 30, 99);
+				jogar(16, 30, 99);
 				break;
 			case 4:
 				continuar = 0;
@@ -120,9 +122,9 @@ int main(){
 
 		system(limpar);
 
-		if(errado){
+		if(errado)
 			printf("Por favor, digite um valor valido!\n");
-		} errado = 0;
+		errado = 0;
 
 		printf("###INICIO###\n");
 		printf("1.Jogar-----\n");
@@ -403,7 +405,7 @@ int cavar_especial(int** campo, char** campo_real, int i, int j, int x, int y, i
 }
 
 //FUNÇÃO ONDE A PARTIDA OCORRERÁ
-int jogar(int alt, int lar, int q_bomba){
+void jogar(int alt, int lar, int q_bomba){
 	int i, j, continuar = 1;
 	int certo_marcado = 0; 				//BOMBAS MARCADAS CORRETAMENTE
 	int errado_marcado = 0;				//MARCAÇÕES ERRADAS
@@ -589,5 +591,4 @@ int jogar(int alt, int lar, int q_bomba){
 	getchar();
 	free(campo);
 	free(campo_real);
-	return 1;
 }
