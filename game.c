@@ -429,9 +429,9 @@ void jogar(int alt, int lar, int q_bomba){
 	while(continuar){//O JOGO
 		system(limpar);
 		//INTERFACE DO USUÁRIO
-		if(errado){
+		if(errado)
 			printf("Por favor, digite um comando válido!\n");
-		} errado = 0;
+		errado = 0;
 		printf("= = =\n");
 		printf("   ");
 		for(i = 0; i < lar; i++)
@@ -450,13 +450,9 @@ void jogar(int alt, int lar, int q_bomba){
 		scanf("%c %d %d", &comando, &co_x, &co_y);
 		getchar();//CAPTURA O <ENTER>
 
-		//VERIFICA SE VALORES ESTÃO DENTRO DO ACEITÁVEL
-		if((co_x > lar) || (co_x < 1) || (co_y > alt) || (co_y < 1)){
-			errado = 1;
-			continue;
-		}
-		//VERIFICA SE O COMANDO ESCOLHIDO É ACEITÁVEL
-		if(!((comando == 'm') || (comando == 'c') || (comando == 'd') || (comando == 'e'))){
+		//VERIFICA SE COORDENADAS ESTÃO DENTRO DA LARGURA E ALTURA E SE O COMANDO ESCOLHIDO É ACEITÁVEL
+		if(((co_x > lar) || (co_x < 1) || (co_y > alt) || (co_y < 1)) 
+		  || ((comando != 'm') && (comando != 'c') && (comando != 'd') && (comando != 'e'))){
 			errado = 1;
 			continue;
 		}
