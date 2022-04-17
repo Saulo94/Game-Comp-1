@@ -309,7 +309,18 @@ void cavar_zero(int** campo_man, char** campo_int, int co_y, int co_x, int lar, 
 	}
 }
 
-//CAVA AS CASAS ADJACENTES DE ACORDO COM AS BOMBAS MARCADAS
+/*
+Função que verifica se as casas adjacentes marcadas
+correspondem a bombas. Caso sim, o 'cavamento especial'
+ocorrerá. Se as marcações estiverem erradas e a quantidade
+dela não corresponder ao número da coordenada, a
+ação será classificada como inválida. Se a quantidade
+corresponder ao número da coordenada e alguma delas
+estiverem fora das bombas, ele perderá o jogo, pois
+cavou uma bomba.
+
+entradas(campo_manipulação, campo_interface, coord_y, coord_x, larg, altu, qt_cavados_corretamente)
+*/
 int cavar_especial(int** campo_man, char** campo_int, int co_y, int co_x, int lar, int alt, int* cavados){
 	int k;
 	int n_x[8], n_y[8], l = 0;//COORDENADAS PARA LUGARES SEM BOMBA NEM MARCAÇÃO
@@ -422,7 +433,11 @@ int cavar_especial(int** campo_man, char** campo_int, int co_y, int co_x, int la
 		return 0;//AÇÃO INVÁLIDA
 }
 
-//FUNÇÃO ONDE A PARTIDA OCORRERÁ
+/*
+Função onde a partida ocorrerá
+
+entradas(altura, largura, qt_bombas)
+*/
 void jogar(int alt, int lar, int q_bomba){
 	int i, j, k, continuar = 1;
 	int certo_marcado = 0; 				//BOMBAS MARCADAS CORRETAMENTE
@@ -434,17 +449,16 @@ void jogar(int alt, int lar, int q_bomba){
 
 	//ALOCAÇÃO DE MEMÓRIA DINÃMICA
 	int *coordenadas = (int*) calloc(q_bomba, sizeof(int));		//VETOR QUE GUARDA AS COORDENADAS DAS BOMBAS
-	char **campo_real = (char**) malloc(alt * sizeof(char*));	//MATRIZ USADA COMO INTERFACE
-	int **campo = (int**) malloc(alt * sizeof(int*));			//MATRIZ USADA PARA MANIPULACÃO
+	char **campo_int = (char**) malloc(alt * sizeof(char*));	//MATRIZ USADA COMO INTERFACE
+	int **campo_man = (int**) malloc(alt * sizeof(int*));			//MATRIZ USADA PARA MANIPULACÃO
 
 	for(i = 0; i < alt; i++){
 		//ALOCA ESPAÇOS PARA CADA LINHA
-		*(campo + i) = (int*) calloc(lar, sizeof(int));
-		*(campo_real + i) = (char*) malloc(lar * sizeof(char));
+		*(campo_man + i) = (int*) calloc(lar, sizeof(int));
+		*(campo_int + i) = (char*) malloc(lar * sizeof(char));
 		//PREENCHE A LINHA DO CAMPO_REAL COM 'X'S
-		for(j = 0; j < lar; j++){
-			campo_real[i][j] = 'X';
-		}
+		for(j = 0; j < lar; j++)
+			campo_int[i][j] = 'X';
 	}
 	//
 
@@ -455,27 +469,25 @@ void jogar(int alt, int lar, int q_bomba){
 	for(i = 0; i < q_bomba; i++){
 		j = *(coordenadas + i) % lar;
 		k = (*(coordenadas + i) - j) / lar;
-		campo[k][j] = -1;
+		campo_man[k][j] = -1;
 	}
 	free(coordenadas);
 
-	//PREENCHE O CAMPO COM DETALHES
-	preencher_campo(campo, lar, alt);
+	//PREENCHE O CAMPO COM INFORMAÇÕES
+	preencher_campo(campo_man, lar, alt);
 
 	printf("mapa\n");
 	for(i = 0; i < alt; i++){
 		for(j = 0; j < lar; j++){
-			printf("%02d ", campo[i][j]);
+			printf("%02d ", campo_man[i][j]);
 		} printf("\n");
 	}
 	getchar();
 
 	while(continuar){//O JOGO
 		system(limpar);
+
 		//EXPÕE CAMPO PARA O USUÁRIO
-		if(errado)
-			printf("Por favor, digite um comando válido!\n");
-		errado = 0;
 		printf("= = =\n");
 		printf("   ");
 		for(i = 0; i < lar; i++)
@@ -484,12 +496,17 @@ void jogar(int alt, int lar, int q_bomba){
 		for(i = 0; i < alt; i++){
 			printf("%02d ", i + 1);
 			for(j = 0; j < lar; j++)
-				printf("%02c ", campo_real[i][j]);
+				printf("%02c ", campo_int[i][j]);
 			printf("\n");
 		}
 		printf("= = =\n");
 		printf("bombas = %d\n", q_bomba - certo_marcado - errado_marcado);
 		//
+
+		if(errado)
+			printf("Por favor, digite um comando válido!\n");
+		errado = 0;
+
 		printf("comando: ");
 		scanf("%c %d %d", &comando, &co_x, &co_y);
 		getchar();//CAPTURA O <ENTER>
@@ -502,19 +519,19 @@ void jogar(int alt, int lar, int q_bomba){
 		}
 		co_y--;
 		co_x--;
-		if(campo[co_y][co_x] == -1){ //SE A COORDENADA ESCOLHIDA FOR UMA BOMBA
+		if(campo_man[co_y][co_x] == -1){ //SE A COORDENADA ESCOLHIDA FOR UMA BOMBA
 			switch(comando){
 				case 'm':
-					if(campo_real[co_y][co_x] == 'X'){ //MARCOU UMA BOMBA NÃO CAVADA
-						campo_real[co_y][co_x] = 'M';
+					if(campo_int[co_y][co_x] == 'X'){ //MARCOU UMA BOMBA NÃO CAVADA
+						campo_int[co_y][co_x] = 'M';
 						certo_marcado++;
 					}
 					else
 						errado = 1;
 					break;
 				case 'd':
-					if(campo_real[co_y][co_x] == 'M'){ //DESMARCOU UMA BOMBA NÃO CAVADA
-						campo_real[co_y][co_x] = 'X';
+					if(campo_int[co_y][co_x] == 'M'){ //DESMARCOU UMA BOMBA NÃO CAVADA
+						campo_int[co_y][co_x] = 'X';
 						certo_marcado--;
 					}
 					else
@@ -528,31 +545,31 @@ void jogar(int alt, int lar, int q_bomba){
 					break;
 			}
 		}
-		else if(campo[co_y][co_x] > 0){ //SE A COORDENADA ESCOLHIDA FOR UMA CASA COM AO MENOS UMA BOMBA ADJACENTE
+		else if(campo_man[co_y][co_x] > 0){ //SE A COORDENADA ESCOLHIDA FOR UMA CASA COM AO MENOS UMA BOMBA ADJACENTE
 			switch(comando){
 				case 'm':
-					if(campo_real[co_y][co_x] == 'X'){ //MARCOU UMA POSIÇÃO SEM BOMBA
-						campo_real[co_y][co_x] = 'M';
+					if(campo_int[co_y][co_x] == 'X'){ //MARCOU UMA POSIÇÃO SEM BOMBA
+						campo_int[co_y][co_x] = 'M';
 						errado_marcado++;
 					}
 					else
 						errado = 1;
 					break;
 				case 'd':
-					if(campo_real[co_y][co_x] == 'M'){ //DESMARCOU UMA POSIÇÃO SEM BOMBA
-						campo_real[co_y][co_x] = 'X';
+					if(campo_int[co_y][co_x] == 'M'){ //DESMARCOU UMA POSIÇÃO SEM BOMBA
+						campo_int[co_y][co_x] = 'X';
 						errado_marcado--;
 					}
 					else
 						errado = 1;
 					break;
 				case 'c': //CAVOU UMA POSIÇÃO SEM BOMBA
-					campo_real[co_y][co_x] = campo[co_y][co_x] + '0';
+					campo_int[co_y][co_x] = campo_man[co_y][co_x] + '0';
 					nao_bomba--;
 					break;
 				case 'e':
-					if((int) campo_real[co_y][co_x] - '0' > 0){
-						int res = cavar_especial(campo, campo_real, co_y, co_x, lar, alt, &nao_bomba);
+					if((int) campo_int[co_y][co_x] - '0' > 0){
+						int res = cavar_especial(campo_man, campo_int, co_y, co_x, lar, alt, &nao_bomba);
 						if(!res){
 							errado = 1;
 						}
@@ -566,33 +583,33 @@ void jogar(int alt, int lar, int q_bomba){
 
 			}
 		}
-		else if(campo[co_y][co_x] == 0){ //SE A COORDENADA ESCOLHIDA NÃO TIVER NENHUMA BOMBA ADJACENTE E AINDA NÃO TIVER SIDO CAVADA
+		else if(campo_man[co_y][co_x] == 0){ //SE A COORDENADA ESCOLHIDA NÃO TIVER NENHUMA BOMBA ADJACENTE E AINDA NÃO TIVER SIDO CAVADA
 			switch(comando){
 				case 'm':
-					if(campo_real[co_y][co_x] == 'X'){ //MARCOU UMA POSIÇÃO SEM BOMBA
-						campo_real[co_y][co_x] = 'M';
+					if(campo_int[co_y][co_x] == 'X'){ //MARCOU UMA POSIÇÃO SEM BOMBA
+						campo_int[co_y][co_x] = 'M';
 						errado_marcado++;
 					}
 					else
 						errado = 1;
 					break;
 				case 'd':
-					if(campo_real[co_y][co_x] == 'M'){ //DESMARCOU UMA POSIÇÃO SEM BOMBA
-						campo_real[co_y][co_x] = 'X';
+					if(campo_int[co_y][co_x] == 'M'){ //DESMARCOU UMA POSIÇÃO SEM BOMBA
+						campo_int[co_y][co_x] = 'X';
 						errado_marcado--;
 					}
 					else
 						errado = 1;
 					break;
 				case 'c':
-					cavar_zero(campo, campo_real, co_y, co_x, lar, alt, &nao_bomba);
+					cavar_zero(campo_man, campo_int, co_y, co_x, lar, alt, &nao_bomba);
 					break;
 				case 'e':
 					errado = 1;
 					break;
 			}
 		}
-		else if(campo[co_y][co_x] == -2){ //SE A COORDENADA ESCOLHIDA NÃO TIVER NENHUMA BOMBA ADJACENTE MAS JÁ TIVER SIDO CAVADA
+		else if(campo_man[co_y][co_x] == -2){ //SE A COORDENADA ESCOLHIDA NÃO TIVER NENHUMA BOMBA ADJACENTE MAS JÁ TIVER SIDO CAVADA
 			errado = 1;
 		}
 		if(nao_bomba == 0){ //SE TODAS AS COORDENADAS SEGURAS TIVEREM SIDO CAVADAS	
@@ -608,7 +625,7 @@ void jogar(int alt, int lar, int q_bomba){
 	}
 	printf("Pressione <Enter> para continuar.\n");
 	getchar();
-	free(campo);
-	free(campo_real);
+	free(campo_man);
+	free(campo_int);
 	return;
 }
