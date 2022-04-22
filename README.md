@@ -2,7 +2,7 @@
 
 Português :brazil:
 
-Jogo campo minado iniciado durante meu primeiro período no curso de Ciência da Computação e com alguns ajustes posteriores.
+Jogo campo minado iniciado durante meu primeiro período no curso de Ciência da Computação com alguns ajustes posteriores.
 
 English :us::gb:
 
